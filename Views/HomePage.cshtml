@@ -1,0 +1,26 @@
+﻿@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Extensions
+@using Umbraco.Cms.Core.Models.Blocks
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+	Layout = "_Layout";
+	var siteTitle = Model.Value<string>("siteTitle");
+	var siteSubTitle = Model.Value<string>("siteSubTitle");
+	
+	// Get hero blocks using the correct alias
+	var heroPromotionalBlocks = Model.Value<BlockListModel>("heroPromotionBlock");
+	
+	// Set page title and meta description for browser header
+	ViewData["Title"] = siteTitle ?? Model.Name;
+	ViewData["Description"] = siteSubTitle ?? "";
+}
+
+@if (heroPromotionalBlocks != null && heroPromotionalBlocks.Any())
+{
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-0">
+		@await Html.GetBlockListHtmlAsync(heroPromotionalBlocks)
+	</div>
+}
+
+@* Bank Cards Section *@
+@await Html.PartialAsync("Partials/BankCardsSection", Model)

@@ -1,0 +1,151 @@
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@using Umbraco.Cms.Core.Models.Blocks
+@using System.Linq
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    // Get Site Settings - try to find it in root or children
+    var root = Model.Root();
+    var siteSettings = root;
+    
+    // If root is not Site Settings, try to find it in children
+    if (root?.ContentType.Alias != "siteSettings")
+    {
+        siteSettings = root?.Children?.FirstOrDefault(x => x.ContentType.Alias == "siteSettings");
+    }
+    
+    var logo = siteSettings?.Value<IPublishedContent>("siteLogo");
+    var primaryNavigation = siteSettings?.Value<BlockListModel>("primaryNavigation");
+    var utilityNavigation = siteSettings?.Value<BlockListModel>("utilityNavigation");
+    var secondaryCtaBar = siteSettings?.Value<BlockListModel>("secondaryCtaBar");
+}
+
+<!-- Primary Navigation Bar -->
+<nav class="bg-white border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <!-- Logo -->
+            <div class="flex-shrink-0">
+                @if (logo != null)
+                {
+                    <img src="@logo.Url()" alt="Logo" class="h-10 w-auto" />
+                }
+                else
+                {
+                    <span class="text-2xl font-bold text-red-600">Skanda Bank</span>
+                }
+            </div>
+
+            <!-- Primary Navigation Links -->
+            <div class="hidden md:flex md:items-center md:space-x-8">
+                @if (primaryNavigation != null && primaryNavigation.Any())
+                {
+                    @foreach (var item in primaryNavigation)
+                    {
+                        var linkText = item.Content.Value<string>("linkText");
+                        var link = item.Content.Value<Umbraco.Cms.Core.Models.Link>("link");
+                        if (link != null && !string.IsNullOrEmpty(linkText))
+                        {
+                            <a href="@link.Url" target="@(link.Target ?? "_self")" 
+                               class="text-gray-700 hover:text-red-600 px-3 py-2 text-base font-medium transition-colors">
+                                @linkText
+                            </a>
+                        }
+                    }
+                }
+                else
+                {
+                    <!-- Default navigation if not set -->
+                    <a href="#" class="text-gray-700 hover:text-red-600 px-3 py-2 text-base font-medium">Personal</a>
+                    <a href="#" class="text-gray-700 hover:text-red-600 px-3 py-2 text-base font-medium">Business</a>
+                    <a href="#" class="text-gray-700 hover:text-red-600 px-3 py-2 text-base font-medium">Corporate</a>
+                }
+            </div>
+
+            <!-- Utility Navigation (Search, Log in) -->
+            <div class="flex items-center space-x-4">
+                @if (utilityNavigation != null && utilityNavigation.Any())
+                {
+                    @foreach (var item in utilityNavigation)
+                    {
+                        var linkText = item.Content.Value<string>("linkText");
+                        var link = item.Content.Value<Umbraco.Cms.Core.Models.Link>("link");
+                        if (link != null && !string.IsNullOrEmpty(linkText))
+                        {
+                            <a href="@link.Url" target="@(link.Target ?? "_self")" 
+                               class="text-gray-700 hover:text-red-600 flex items-center space-x-1 text-base font-medium">
+                                <span>@linkText</span>
+                            </a>
+                        }
+                    }
+                }
+                else
+                {
+                    <!-- Default utility nav -->
+                    <a href="#" class="text-gray-700 hover:text-red-600 flex items-center space-x-1 text-base font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <span>Search</span>
+                    </a>
+                    <a href="#" class="text-gray-700 hover:text-red-600 flex items-center space-x-1 text-base font-medium">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        <span>Log in</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Secondary CTA Bar -->
+@if (secondaryCtaBar != null && secondaryCtaBar.Any())
+{
+    <div class="bg-[#8B1538] text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-12 overflow-x-auto">
+                <div class="flex items-center space-x-6">
+                    @foreach (var item in secondaryCtaBar)
+                    {
+                        var linkText = item.Content.Value<string>("linkText");
+                        var link = item.Content.Value<Umbraco.Cms.Core.Models.Link>("link");
+                        if (link != null && !string.IsNullOrEmpty(linkText))
+                        {
+                            <a href="@link.Url" target="@(link.Target ?? "_self")" 
+                               class="text-white text-base font-medium whitespace-nowrap relative pb-1 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">
+                                @linkText
+                            </a>
+                        }
+                    }
+                </div>
+                <a href="#" class="text-white text-base font-medium whitespace-nowrap relative pb-1 ml-4 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">
+                    Talk to us
+                </a>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <!-- Default CTA bar -->
+    <div class="bg-[#8B1538] text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-12 overflow-x-auto">
+                <div class="flex items-center space-x-6">
+                    <a href="#" class="text-white text-base font-medium whitespace-nowrap relative pb-1 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">Open an account</a>
+                    <a href="#" class="text-white text-base font-medium whitespace-nowrap relative pb-1 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">Get a credit card</a>
+                    <a href="#" class="text-white text-base font-medium whitespace-nowrap relative pb-1 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">Apply for a loan</a>
+                    <a href="#" class="text-white text-base font-medium whitespace-nowrap relative pb-1 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">Get insured</a>
+                    <a href="#" class="text-white text-base font-medium whitespace-nowrap relative pb-1 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">Explore asset management</a>
+                    <a href="#" class="text-white text-base font-medium whitespace-nowrap relative pb-1 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">Diaspora banking</a>
+                    <a href="#" class="text-white text-base font-medium whitespace-nowrap relative pb-1 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">Offers and deals</a>
+                </div>
+                <a href="#" class="text-white text-base font-medium whitespace-nowrap relative pb-1 ml-4 transition-all duration-200 hover:after:w-full after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-300 after:transition-all after:duration-200">
+                    Talk to us
+                </a>
+            </div>
+        </div>
+    </div>
+}

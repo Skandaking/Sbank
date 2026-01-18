@@ -1,0 +1,103 @@
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    // Try multiple possible aliases for the media picker (Umbraco 17 Multiple Media Picker)
+    var bankCardImages = Model.Value<IEnumerable<IPublishedContent>>("bankCardsImages") 
+        ?? Model.Value<IEnumerable<IPublishedContent>>("bankCardImages");
+    
+    var sectionTitle = Model.Value<string>("sectionTitle");
+    var sectionDescription = Model.Value<string>("sectionDescription");
+    var buttonText = Model.Value<string>("buttonText");
+    var buttonLink = Model.Value<Umbraco.Cms.Core.Models.Link>("buttonLink");
+}
+
+@if (bankCardImages != null && bankCardImages.Any() || !string.IsNullOrEmpty(sectionTitle))
+{
+    <section class="bg-white py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center min-h-[400px]">
+                <!-- Bank Cards Images (Left Side) -->
+                <div class="relative flex justify-center md:justify-start items-center min-h-[400px]">
+                    @if (bankCardImages != null && bankCardImages.Any())
+                    {
+                        <div class="relative w-full max-w-md">
+                            @{ var imageList = bankCardImages.ToList(); }
+                            @for (int i = 0; i < imageList.Count; i++)
+                            {
+                                var image = imageList[i];
+                                @if (image != null)
+                                {
+                                    <div class="@(i == 0 ? "relative z-20" : "absolute top-12 left-12 z-10 opacity-90") transform @(i == 1 ? "-rotate-6" : "") transition-all duration-300 hover:scale-105 hover:z-30">
+                                        <img src="@image.Url()" alt="@(image.Name ?? "Bank Card")" class="w-full max-w-xs rounded-lg shadow-2xl" />
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Debug: Show property info if images not found -->
+                        <div class="w-full max-w-sm h-64 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-4">
+                            <span class="text-gray-400 mb-2">Bank Card Images</span>
+                            <span class="text-xs text-gray-500 text-center">
+                                @if (Model.HasValue("bankCardsImages"))
+                                {
+                                    <span>Property 'bankCardsImages' exists</span>
+                                }
+                                else if (Model.HasValue("bankCardImages"))
+                                {
+                                    <span>Property 'bankCardImages' exists</span>
+                                }
+                                else
+                                {
+                                    <span>No images property found</span>
+                                }
+                            </span>
+                        </div>
+                    }
+                </div>
+
+                <!-- Text Content and Button (Right Side) -->
+                <div class="space-y-6 flex flex-col justify-center">
+                    @if (!string.IsNullOrEmpty(sectionTitle))
+                    {
+                        <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                            @sectionTitle
+                        </h2>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(sectionDescription))
+                    {
+                        <p class="text-lg md:text-xl text-gray-600 leading-relaxed">
+                            @sectionDescription
+                        </p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(buttonText))
+                    {
+                        if (buttonLink != null)
+                        {
+                            <a href="@buttonLink.Url" target="@(buttonLink.Target ?? "_self")" 
+                               class="inline-flex items-center px-8 py-4 bg-[#8B1538] text-white text-lg font-semibold rounded-lg hover:bg-[#6B0F2A] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                <span>@buttonText</span>
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </a>
+                        }
+                        else
+                        {
+                            <button class="inline-flex items-center px-8 py-4 bg-[#8B1538] text-white text-lg font-semibold rounded-lg hover:bg-[#6B0F2A] transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                                <span>@buttonText</span>
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+}

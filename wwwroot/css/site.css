@@ -1,0 +1,78 @@
+/* Basic styling for hero promotional blocks */
+.hero-promotional-blocks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+}
+
+.hero-promotional-block {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #f5f5f5;
+}
+
+.hero-promotional-block__image {
+    width: 100%;
+    height: auto;
+}
+
+.hero-promotional-block__image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.hero-promotional-block__content {
+    padding: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+}
+
+.hero-promotional-block__title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.hero-promotional-block__description {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-promotional-block__cta {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: #e91e63;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.hero-promotional-block__cta:hover {
+    background-color: #c2185b;
+    text-decoration: underline;
+}
+
+.home-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.site-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.site-subtitle {
+    font-size: 1.5rem;
+    color: #666;
+    margin-bottom: 2rem;
+}

@@ -1,0 +1,71 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem>
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@{
+    var content = Model.Content;
+    var image = content.Value<IPublishedContent>("image");
+    var title = content.Value<string>("title");
+    var description = content.Value<string>("description");
+    var ctaText = content.Value<string>("ctaText");
+    var ctaLink = content.Value<Umbraco.Cms.Core.Models.Link>("ctaLink");
+    var backgroundColor = content.Value<string>("backgroundColor");
+}
+
+<div class="relative h-[450px] overflow-hidden group cursor-pointer">
+    @if (image != null)
+    {
+        <img src="@image.Url()" alt="@image.Name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+    }
+    else if (backgroundColor != null)
+    {
+        <div class="w-full h-full" style="background-color: @backgroundColor;"></div>
+    }
+    
+    <!-- Brand gradient overlay (reusable component) -->
+    @{
+        ViewData["Intensity"] = "strong";
+        ViewData["Position"] = "bottom";
+        ViewData["Color"] = "#8B1538";
+    }
+    <div class="group-hover:opacity-100 transition-opacity duration-300">
+        @await Html.PartialAsync("Partials/GradientOverlay", null, ViewData)
+    </div>
+    
+    <!-- Content overlay at bottom -->
+    <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
+        @if (!string.IsNullOrEmpty(title))
+        {
+            <h2 class="text-2xl md:text-3xl font-bold mb-3 leading-tight max-w-2xl group-hover:mb-4 transition-all duration-300">@title</h2>
+        }
+        
+        @if (!string.IsNullOrEmpty(description))
+        {
+            <div class="overflow-hidden transition-all duration-300 ease-in-out max-h-0 group-hover:max-h-96 opacity-0 group-hover:opacity-100">
+                <p class="text-white/90 mb-4 text-sm md:text-base leading-relaxed max-w-2xl">@description</p>
+            </div>
+        }
+        
+        @if (!string.IsNullOrEmpty(ctaText))
+        {
+            if (ctaLink != null)
+            {
+                <a href="@ctaLink.Url" target="@(ctaLink.Target ?? "_self")" 
+                   class="inline-flex items-center text-white underline text-base md:text-lg font-semibold hover:text-yellow-300 transition-all duration-200 group-hover:translate-x-1">
+                    <span>@ctaText</span>
+                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            }
+            else
+            {
+                <span class="inline-flex items-center text-white underline text-base md:text-lg font-semibold">
+                    <span>@ctaText</span>
+                    <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </span>
+            }
+        }
+    </div>
+</div>
