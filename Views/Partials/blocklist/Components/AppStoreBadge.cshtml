@@ -1,0 +1,18 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem>
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@{
+    var content = Model.Content;
+    var storeName = content.Value<string>("storeName");
+    var badgeImage = content.Value<IPublishedContent>("badgeImage");
+    var downloadLink = content.Value<Umbraco.Cms.Core.Models.Link>("downloadLink");
+}
+
+@if (downloadLink != null && badgeImage != null)
+{
+    <a href="@downloadLink.Url" target="@(downloadLink.Target ?? "_self")" 
+       class="inline-block hover:opacity-80 transition-opacity duration-200" 
+       aria-label="Download from @storeName">
+        <img src="@badgeImage.Url()" alt="@storeName badge" class="h-10 w-auto" />
+    </a>
+}

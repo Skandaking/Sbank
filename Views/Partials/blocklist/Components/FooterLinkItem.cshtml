@@ -1,0 +1,17 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<Umbraco.Cms.Core.Models.Blocks.BlockListItem>
+@using Umbraco.Extensions
+@{
+    var content = Model.Content;
+    var linkText = content.Value<string>("linkText");
+    var link = content.Value<Umbraco.Cms.Core.Models.Link>("link");
+}
+
+@if (link != null && !string.IsNullOrEmpty(linkText))
+{
+    <li>
+        <a href="@link.Url" target="@(link.Target ?? "_self")" 
+           class="text-gray-300 hover:text-white transition-colors duration-200 text-sm">
+            @linkText
+        </a>
+    </li>
+}

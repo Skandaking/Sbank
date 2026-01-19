@@ -1,0 +1,175 @@
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@using Umbraco.Cms.Core.Models.Blocks
+@using System.Linq
+@using System
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@{
+    // Get Footer content node - try to find it in root or children
+    var root = Model.Root();
+    IPublishedContent footerNode = null;
+    
+    // First, try to find Footer content node by content type alias (case-insensitive)
+    // Check if root is Footer
+    if (root != null && root.ContentType.Alias?.ToLower() == "footer")
+    {
+        footerNode = root;
+    }
+    // Check root's children for Footer by alias
+    else if (root?.Children != null)
+    {
+        footerNode = root.Children.FirstOrDefault(x => x.ContentType.Alias?.ToLower() == "footer");
+    }
+    
+    // If not found by alias, try searching by name "Footer" (case-insensitive)
+    if (footerNode == null && root?.Children != null)
+    {
+        footerNode = root.Children.FirstOrDefault(x => x.Name?.Equals("Footer", StringComparison.OrdinalIgnoreCase) == true);
+    }
+    
+    // If Footer node still not found, fall back to Site Settings (for backward compatibility)
+    if (footerNode == null)
+    {
+        var siteSettings = root;
+        if (root?.ContentType.Alias != "siteSettings")
+        {
+            siteSettings = root?.Children?.FirstOrDefault(x => x.ContentType.Alias == "siteSettings");
+        }
+        footerNode = siteSettings;
+    }
+    
+    // Get footer properties from Footer node (or Site Settings fallback)
+    var disclaimerText = footerNode?.Value<string>("footerDisclaimerText");
+    var appStoreBadges = footerNode?.Value<BlockListModel>("footerAppStoreBadges");
+    var socialMediaLinks = footerNode?.Value<BlockListModel>("footerSocialMediaLinks");
+    var usefulToolsLinks = footerNode?.Value<BlockListModel>("footerUsefulToolsLinks");
+    var ourSitesLinks = footerNode?.Value<BlockListModel>("footerOurSitesLinks");
+    var whoWeAreLinks = footerNode?.Value<BlockListModel>("footerWhoWeAreLinks");
+    var supportLinks = footerNode?.Value<BlockListModel>("footerSupportLinks");
+    var legalLinks = footerNode?.Value<BlockListModel>("footerLegalLinks");
+    var legalRegulatoryText = footerNode?.Value<string>("footerLegalRegulatoryText");
+}
+
+<footer class="bg-gray-900 text-white">
+    <!-- Disclaimer Section -->
+    @if (!string.IsNullOrEmpty(disclaimerText))
+    {
+        <div class="bg-gray-800 border-b border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <p class="text-sm text-gray-300">@disclaimerText</p>
+            </div>
+        </div>
+    }
+
+    <!-- Main Footer Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
+            <!-- Useful Tools Column -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Useful Tools</h3>
+                @if (usefulToolsLinks != null && usefulToolsLinks.Any())
+                {
+                    <ul class="space-y-2">
+                        @foreach (var item in usefulToolsLinks)
+                        {
+                            @await Html.PartialAsync("Partials/blocklist/Components/FooterLinkItem", item)
+                        }
+                    </ul>
+                }
+            </div>
+
+            <!-- Our Sites Column -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Our Sites</h3>
+                @if (ourSitesLinks != null && ourSitesLinks.Any())
+                {
+                    <ul class="space-y-2">
+                        @foreach (var item in ourSitesLinks)
+                        {
+                            @await Html.PartialAsync("Partials/blocklist/Components/FooterLinkItem", item)
+                        }
+                    </ul>
+                }
+            </div>
+
+            <!-- Who We Are Column -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Who We Are</h3>
+                @if (whoWeAreLinks != null && whoWeAreLinks.Any())
+                {
+                    <ul class="space-y-2">
+                        @foreach (var item in whoWeAreLinks)
+                        {
+                            @await Html.PartialAsync("Partials/blocklist/Components/FooterLinkItem", item)
+                        }
+                    </ul>
+                }
+            </div>
+
+            <!-- Support Column -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Support</h3>
+                @if (supportLinks != null && supportLinks.Any())
+                {
+                    <ul class="space-y-2">
+                        @foreach (var item in supportLinks)
+                        {
+                            @await Html.PartialAsync("Partials/blocklist/Components/FooterLinkItem", item)
+                        }
+                    </ul>
+                }
+            </div>
+
+            <!-- Legal Column -->
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Legal</h3>
+                @if (legalLinks != null && legalLinks.Any())
+                {
+                    <ul class="space-y-2">
+                        @foreach (var item in legalLinks)
+                        {
+                            @await Html.PartialAsync("Partials/blocklist/Components/FooterLinkItem", item)
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+
+        <!-- App Store Badges and Social Media Section -->
+        <div class="border-t border-gray-700 pt-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <!-- App Store Badges -->
+                @if (appStoreBadges != null && appStoreBadges.Any())
+                {
+                    <div class="flex flex-wrap gap-4">
+                        @foreach (var item in appStoreBadges)
+                        {
+                            @await Html.PartialAsync("Partials/blocklist/Components/AppStoreBadge", item)
+                        }
+                    </div>
+                }
+
+                <!-- Social Media Links -->
+                @if (socialMediaLinks != null && socialMediaLinks.Any())
+                {
+                    <div class="flex flex-wrap gap-4">
+                        @foreach (var item in socialMediaLinks)
+                        {
+                            @await Html.PartialAsync("Partials/blocklist/Components/SocialMediaLink", item)
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Legal/Regulatory Text Section -->
+    @if (!string.IsNullOrEmpty(legalRegulatoryText))
+    {
+        <div class="bg-gray-800 border-t border-gray-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <p class="text-sm text-gray-400">@legalRegulatoryText</p>
+            </div>
+        </div>
+    }
+</footer>
