@@ -471,12 +471,16 @@ umbraco-package-schema.json
 /umbraco/Data/TEMP/
 
 # SQLite database files
-/umbraco/Data/*.sqlite.db
-/umbraco/Data/*.sqlite.db-shm
-/umbraco/Data/*.sqlite.db-wal
+# NOTE: Uncommented to allow database files to be committed for project portability
+# If you want to ignore database files, uncomment the lines below:
+# /umbraco/Data/*.sqlite.db
+# /umbraco/Data/*.sqlite.db-shm
+# /umbraco/Data/*.sqlite.db-wal
 
 # Log files
 /umbraco/Logs/
 
 # Media files
-/wwwroot/media/
+# NOTE: Uncommented to allow media files to be committed for project portability
+# If media files are large, consider using cloud storage and uncomment the line below:
+# /wwwroot/media/
